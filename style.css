@@ -439,3 +439,62 @@ html, body {
 ::-webkit-scrollbar { width: 4px; height: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: #ccc; border-radius: 2px; }
+
+/* ===== RESPONSIVE MOBILE ===== */
+@media (max-width: 768px) {
+    .app {
+        flex-direction: column;
+        overflow-y: auto;
+        height: 100vh;
+    }
+    .sidebar {
+        width: 100%;
+        min-height: 50px;
+        flex-direction: row;
+        padding: 0 16px;
+        justify-content: space-between;
+        z-index: 10;
+    }
+    .sidebar-logo { margin-bottom: 0; }
+    .sidebar-label {
+        writing-mode: horizontal-tb;
+        transform: none;
+        margin-top: 0;
+        font-size: 0.9rem;
+        font-weight: bold;
+        flex: 1;
+        margin-left: 10px;
+        text-align: left;
+    }
+    .sidebar-badge {
+        margin-top: 0;
+        padding-bottom: 0;
+        font-size: 1.5rem;
+    }
+    .devices-panel {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+        padding: 10px;
+        flex-shrink: 0;
+    }
+    .const-list {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    .const-row {
+        flex: 1 1 30%;
+    }
+    .main-area {
+        overflow: visible;
+        padding: 10px;
+    }
+    .top-row, .bottom-row {
+        flex-direction: column;
+    }
+    .data-panel { width: 100%; height: auto; }
+    .skyplot-panel { height: 320px; }
+    .signal-panel { height: 250px; }
+    .map-panel { height: 300px; }
+}
