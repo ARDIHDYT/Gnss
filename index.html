@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GPS Center Lite</title>
+    <meta name="description" content="GPS Dashboard Lite — Satellite Position, Signal, dan Data View real-time tanpa CDN berat">
+    <link rel="stylesheet" href="leaflet.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app">
+
+    <!-- Sidebar kiri -->
+    <div class="sidebar">
+        <div class="sidebar-logo">
+            <!-- GPS crosshair icon -->
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="12" r="10" stroke="#e53935" stroke-width="2"/>
+                <path d="M12 2v4M12 18v4M2 12h4M18 12h4" stroke="#e53935" stroke-width="2" stroke-linecap="round"/>
+                <circle cx="12" cy="12" r="3" fill="#e53935"/>
+            </svg>
+        </div>
+        <div class="sidebar-label">GPS Lite</div>
+        <div class="sidebar-badge" id="conn-dot" title="Status koneksi">●</div>
+    </div>
+
+    <!-- Panel Devices -->
+    <div class="devices-panel">
+        <div class="panel-heading">Devices</div>
+        <div class="device-card" id="device-card">
+            <div class="device-row">
+                <span class="device-name">Device · COM15</span>
+                <span class="device-toggle on" id="device-toggle"></span>
+            </div>
+            <span class="device-status" id="conn-status">Connecting...</span>
+        </div>
+        <div class="panel-heading" style="margin-top:12px">Constellation</div>
+        <div class="const-list">
+            <div class="const-row"><span class="dot" style="background:#ff9800"></span><span class="cname">GPS (G)</span><span class="ccount" id="count-gps">0/0</span></div>
+            <div class="const-row"><span class="dot" style="background:#90a4ae"></span><span class="cname">SBAS (S)</span><span class="ccount" id="count-sbas">0/0</span></div>
+            <div class="const-row"><span class="dot" style="background:#fdd835; outline:1px solid #ccc;"></span><span class="cname">Galileo (E)</span><span class="ccount" id="count-galileo">0/0</span></div>
+            <div class="const-row"><span class="dot" style="background:#66bb6a"></span><span class="cname">BeiDou (B)</span><span class="ccount" id="count-beidou">0/0</span></div>
+            <div class="const-row"><span class="dot" style="background:#42a5f5"></span><span class="cname">GLONASS (R)</span><span class="ccount" id="count-glonass">0/0</span></div>
+        </div>
+        <label class="filter-label">
+            <input type="checkbox" id="showNotTracked" checked> Show untracked
+        </label>
+    </div>
+
+    <!-- Area konten utama -->
+    <div class="main-area">
+
+        <!-- TOP ROW: ① Skyplot + ② Data View -->
+        <div class="top-row">
+
+            <!-- ① Satellite Position View -->
+            <div class="panel skyplot-panel">
+                <div class="panel-header">
+                    <span>Satellite Position View</span>
+                    <span class="sat-badge" id="sat-badge">0 sats</span>
+                </div>
+                <div class="skyplot-body">
+                    <canvas id="skyCanvas"></canvas>
+                </div>
+                <div class="legend-bar">
+                    <span><span class="leg-dot filled"></span>Tracked</span>
+                    <span><span class="leg-dot red-ring"></span>Not tracked</span>
+                    <span><span class="leg-dot empty-ring"></span>Not used in nav</span>
+                </div>
+            </div>
+
+            <!-- ② Data View -->
+            <div class="panel data-panel">
+                <div class="panel-header">Data View</div>
+                <div class="data-list">
+                    <div class="data-item">
+                        <span class="data-lbl">Fix Mode</span>
+                        <span class="data-val fix-val" id="d-fix">No Fix</span>
+                    </div>
+                    <hr class="data-hr">
+                    <div class="data-item">
+                        <span class="data-lbl">UTC Time</span>
+                        <span class="data-val" id="d-utc">--</span>
+                    </div>
+                    <div class="data-item">
+                        <span class="data-lbl">Latitude</span>
+                        <span class="data-val coord-val" id="d-lat">--</span>
+                    </div>
+                    <div class="data-item">
+                        <span class="data-lbl">Longitude</span>
+                        <span class="data-val coord-val" id="d-lon">--</span>
+                    </div>
+                    <div class="data-item">
+                        <span class="data-lbl">Altitude</span>
+                        <span class="data-val" id="d-alt">--</span>
+                    </div>
+                    <div class="data-item">
+                        <span class="data-lbl">Speed</span>
+                        <span class="data-val" id="d-spd">--</span>
+                    </div>
+                    <hr class="data-hr">
+                    <div class="data-item">
+                        <span class="data-lbl">PDOP (0–10)</span>
+                        <span class="data-val" id="d-pdop">--</span>
+                    </div>
+                    <div class="data-item">
+                        <span class="data-lbl">HDOP (0–10)</span>
+                        <span class="data-val" id="d-hdop">--</span>
+                    </div>
+                    <hr class="data-hr">
+                    <div class="data-item">
+                        <span class="data-lbl">Used in nav</span>
+                        <span class="data-val sv-val" id="d-numsv">0</span>
+                    </div>
+                    <div class="data-item">
+                        <span class="data-lbl">Not used</span>
+                        <span class="data-val" id="d-notused">0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- BOTTOM ROW: ③ Signal View + ④ Position (ganti Map) -->
+        <div class="bottom-row">
+
+            <!-- ③ Signal View — canvas buatan sendiri -->
+            <div class="panel signal-panel">
+                <div class="panel-header">
+                    <span>Satellite Signal View</span>
+                </div>
+                <div class="signal-wrap">
+                    <canvas id="sigCanvas"></canvas>
+                </div>
+                <div class="legend-bar">
+                    <span><span class="leg-sq" style="background:#ff9800"></span>GPS</span>
+                    <span><span class="leg-sq" style="background:#90a4ae"></span>SBAS</span>
+                    <span><span class="leg-sq" style="background:#fdd835;outline:1px solid #ccc"></span>Galileo</span>
+                    <span><span class="leg-sq" style="background:#66bb6a"></span>BeiDou</span>
+                    <span><span class="leg-sq" style="background:#42a5f5"></span>GLONASS</span>
+                </div>
+            </div>
+
+            <!-- ④ Map View — Leaflet lokal -->
+            <div class="panel map-panel">
+                <div class="panel-header">
+                    <span>Map View</span>
+                    <span class="pos-fix-badge" id="pos-fix">No Fix</span>
+                </div>
+                <div id="map"></div>
+                <div class="map-footer">
+                    <button class="maps-btn" id="maps-btn" onclick="openMaps()">
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                        Google Maps
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="leaflet.min.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
