@@ -350,14 +350,17 @@ function updateGPS(data) {
             if (mapMarker) {
                 mapMarker.setLatLng([_lat, _lon]);
             } else {
-                mapMarker = L.circleMarker([_lat, _lon], {
-                    radius: 8,
-                    fillColor: "#e53935",
-                    color: "#fff",
-                    weight: 2,
-                    opacity: 1,
-                    fillOpacity: 1
-                }).addTo(leafletMap);
+                const redPinSvg = `<svg viewBox="0 0 384 512" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;filter:drop-shadow(0px 3px 3px rgba(0,0,0,0.4));">
+                                     <path fill="#ff0000" d="M172.268 501.67C26.97 291.031 0 269.413 0 192 0 85.961 85.961 0 192 0s192 85.961 192 192c0 77.413-26.97 99.031-172.268 309.67-9.535 13.774-29.93 13.773-39.464 0z"/>
+                                     <circle cx="192" cy="192" r="70" fill="#ffffff"/>
+                                   </svg>`;
+                const redPinIcon = L.divIcon({
+                    className: '', // Kosongkan agar tidak ada kotak putih bawaan leaflet
+                    html: redPinSvg,
+                    iconSize: [36, 48],
+                    iconAnchor: [18, 48]
+                });
+                mapMarker = L.marker([_lat, _lon], {icon: redPinIcon}).addTo(leafletMap);
             }
             if (mapsBtn) mapsBtn.disabled = false;
         }
