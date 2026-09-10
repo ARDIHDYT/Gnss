@@ -283,9 +283,9 @@ if (stat) { stat.textContent = 'Receiving dummy data'; stat.className = 'device-
 
 // Generate dummy data every 1 second
 setInterval(() => {
-    // Random coordinate around Jakarta
-    const lat = (-6.2 + (Math.random() * 0.01 - 0.005)).toFixed(5);
-    const lon = (106.816 + (Math.random() * 0.01 - 0.005)).toFixed(5);
+    // Fixed coordinate (Bandung area)
+    const lat = (-6.9383504).toFixed(7);
+    const lon = (107.6213206).toFixed(7);
     const spd = (Math.random() * 10).toFixed(1);
     const alt = (Math.random() * 50).toFixed(1);
     const numSV = Math.floor(Math.random() * 10) + 5; // 5 to 14
