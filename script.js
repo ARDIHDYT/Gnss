@@ -350,7 +350,14 @@ function updateGPS(data) {
             if (mapMarker) {
                 mapMarker.setLatLng([_lat, _lon]);
             } else {
-                mapMarker = L.marker([_lat, _lon]).addTo(leafletMap);
+                mapMarker = L.circleMarker([_lat, _lon], {
+                    radius: 8,
+                    fillColor: "#e53935",
+                    color: "#fff",
+                    weight: 2,
+                    opacity: 1,
+                    fillOpacity: 1
+                }).addTo(leafletMap);
             }
             if (mapsBtn) mapsBtn.disabled = false;
         }
