@@ -286,9 +286,9 @@ setInterval(() => {
     // Fixed coordinate (Bandung area)
     const lat = (-6.9383504).toFixed(7);
     const lon = (107.6213206).toFixed(7);
-    const spd = (Math.random() * 10).toFixed(1);
-    const alt = (Math.random() * 50).toFixed(1);
-    const numSV = Math.floor(Math.random() * 10) + 5; // 5 to 14
+    const spd = '0.0';
+    const alt = '700.5';
+    const numSV = Math.floor(Math.random() * 5) + 8; // Satellites can still fluctuate slightly
     
     // Generate dummy satellites
     const sats = [];
@@ -310,10 +310,10 @@ setInterval(() => {
         quality: '3', // 3D Fix
         numSV: numSV.toString(),
         spd: spd,
-        cog: (Math.random() * 360).toFixed(1),
+        cog: '0.0',
         utc: new Date().toISOString().substring(11, 19),
-        pdop: (Math.random() * 2 + 1).toFixed(1),
-        hdop: (Math.random() * 2 + 0.5).toFixed(1),
+        pdop: '1.2',
+        hdop: '0.8',
         satellites: sats
     };
     
